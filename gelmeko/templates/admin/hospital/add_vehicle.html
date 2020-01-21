@@ -1,0 +1,108 @@
+
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+<script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.2/js/bootstrapValidator.min.js"></script>
+
+{% endblock %}
+
+{% block content %}
+<div class="wrappers">
+    <div class="col-md-10 offset-md-1">
+        <div class="row">
+            <div class="col-md-3">
+                <label class='control-label'>Vehicle No</label>
+            </div>
+            <div class="col-md-3">
+                <label class='control-label'>Mileage</label>
+            </div>
+            <div class="col-md-3">
+                <label class='control-label'>Status </label>
+            </div>
+            <div class="col-md-3">
+                <label class='control-label'>Vehicle Category </label>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10 offset-md-1 ">
+        <form id="signup" action="/admin/vehicle_save/" method="post">
+            <div class="row elements">
+                <input type="hidden" value="{{data.id}}" name="user_id">
+                <input type="hidden" value="1" name="type">
+                {%csrf_token%}
+                <div class="col-md-3">
+                    <input name="vehicle_no" id="vehicle_no" type="text" placeholder="Vehicle Number"  value="">
+                </div>
+                <div class="col-md-3">
+                    <input name="mileage" id="mileage" type="text" value="" placeholder="Mileage" class="required-entry"
+                        >
+                </div>
+                <div class="col-md-3">
+                    <select name="status" id="status" >
+                        <option value="">Please Select Category</option>
+                        <option value="1">Active</option>
+                        <option value="0">Inactive</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="vehicle_category" id="vehicle_category">
+                        <option value="">Please Select Status</option>
+                        {%for category in category%}
+                        <option value="{{category.id}}">{{category.category_name}}</option>
+                        {% endfor%}
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="results">
+            </div>
+
+            <div class="form-group mt-4">
+                <input type="submit" value="Save" class="btn btn-success btn-sm">
+            </div>
+
+        </form>
+    </div>
+    
+    <div class="col-md-10 offset-md-1 mt-3">
+        <button class="clone btn btn-primary btn-sm">Add More</button>
+        <button class="remove btn btn-danger btn-sm">Remove</button>
+        
+    </div>
+</div>
+
+</div>
+
+<script>
+
+    $('.wrappers').on('click', '.remove', function () {
+        $('.remove').closest('.wrapper').find('.elements').not(':first').last().remove();
+    });
+    $('.wrappers').on('click', '.clone', function () {
+        $('.clone').closest('.wrapper').find('.elements').first().clone().find("input:text").val("").end().appendTo('.results');
+    });
+
+    $('#signup').bootstrapValidator({
+        fields: {
+            vehicle_no: {
+                validators: {
+                    notEmpty: {
+                        message: 'This is required'
+                    },
+                    stringLength: {
+                        min: 3,
+                        max: 50,
+                        message: 'It must be 3 to 50 characters long'
+                    }
+                }
+            }
+
+        }
+    })
+</script>
+{% endblock %}>
+
